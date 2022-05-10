@@ -30,13 +30,13 @@ for dir_p in [cob_p, adid_p, media_p]:
   
     # Send file w/ RFI_num & date to S3 
     dest = bucket_root + "/" + bucket_dir + "/" + new_filename   
-    cmd = ["aws", "s3", "cp", path, dest]
+    cmd = ["aws", "s3", "cp", str(path), str(dest)]
     cmd = " ".join(cmd)
     result = subprocess.run(cmd)
   
     if not result.returncode:
       # Move file to archive folder once successfull upload to S3
-      shutil.copyfile(path, arch_p / new_filename)   
+      shutil.copyfile(path, arch_p / new_filename)
     else:
       print("Error running:  ", cmd)
       # sys.exit(-1)  # ?

@@ -8,15 +8,15 @@ import subprocess
 import logging
 import botocore.session
 
-session = boto3.Session(profile_name='OperationsAdmin')
+session = boto3.Session(profile_name='SSO-Admin')
 s3_client = session.client('s3')
 
 TIMENOW=strftime("%Y%m%d",gmtime())
 bucket_root='s3://gost-dev-cell'
-PARENT_FOLDER = Path("D://dev")
+PARENT_FOLDER = Path("C://dev")
     
 gost_dev = PARENT_FOLDER / "gost-dev-cell"
-gost_dev.mkdir(parents=True, exist_ok=True)  
+gost_dev.mkdir(parents=True, exist_ok=True)
 arch_p = PARENT_FOLDER / "archive"  
 arch_p.mkdir(parents=True, exist_ok=True)
 
@@ -38,7 +38,7 @@ for dir_p in [gost_dev]:
     #cmd = ["aws", "s3", "cp", path, dest]
     # abs_path = os.path.abspath(new_filename)
     # print(abs_path)
-    cmd = ["aws", "s3", "cp", str(path), str(dest)]
+    cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", "SSO-Admin", "--region", "us-gov-west-1"]
     #result = subprocess.run(cmd)
     #cmd2 = f"aws s3api put-object --bucket gost-internal-upload --key {key} --body {path}"
     cmd = " ".join(cmd)
@@ -46,7 +46,7 @@ for dir_p in [gost_dev]:
   
     if not result.returncode:
       # Move file to archive folder once successfull upload to S3
-      shutil.copyfile(path, arch_p / new_filename)   
+      shutil.copyfile(path, arch_p / new_filename)
     else:
       print("Error running:  ", cmd)
       #sys.exit(-1)  # ?
