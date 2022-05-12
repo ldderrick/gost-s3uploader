@@ -8,7 +8,16 @@ import subprocess
 import logging
 import botocore.session
 
-session = boto3.Session(profile_name='SSO-Admin')
+sso = ["aws", "configure", "sso"]
+sso = " ".join(sso)
+result = subprocess.run(sso)
+
+# sso_resp_1 = subprocess.Popen(["https://start.us-gov-home.awsapps.com/directory/gost-smx-com", "us-gov-west-1"], stdout=subprocess.PIPE)
+# print(sso_resp_1.communicate())
+# sso_resp_2 = subprocess.Popen(["us-gov-west-1", "json", "devadmin"], stdout=subprocess.PIPE)
+# print(sso_resp_2.communicate())
+
+session = boto3.Session(profile_name='devadmin')
 s3_client = session.client('s3')
 
 TIMENOW=strftime("%Y%m%d",gmtime())
@@ -38,7 +47,7 @@ for dir_p in [gost_dev]:
     #cmd = ["aws", "s3", "cp", path, dest]
     # abs_path = os.path.abspath(new_filename)
     # print(abs_path)
-    cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", "SSO-Admin", "--region", "us-gov-west-1"]
+    cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", "devadmin", "--region", "us-gov-west-1"]
     #result = subprocess.run(cmd)
     #cmd2 = f"aws s3api put-object --bucket gost-internal-upload --key {key} --body {path}"
     cmd = " ".join(cmd)
@@ -46,7 +55,8 @@ for dir_p in [gost_dev]:
   
     if not result.returncode:
       # Move file to archive folder once successfull upload to S3
-      shutil.copyfile(path, arch_p / new_filename)
+      print("Upload Successful!")
+      shutil.move(path, arch_p / new_filename)
     else:
       print("Error running:  ", cmd)
       #sys.exit(-1)  # ?
