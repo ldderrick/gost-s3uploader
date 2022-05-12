@@ -30,7 +30,7 @@ for dir_p in [cob_p, adid_p, media_p]:
   for path in dir_p.glob("*.csv"):  # path is cob/filename.csv
   
     # append RFI_num and date to the original file name
-    new_filename = (path.stem+"_"+RFI_num+"_"+TIMENOW+".csv")  
+    new_filename = (path.stem+"_"+RFI_num+"_"+TIMENOW+".csv")
   
     # Send file w/ RFI_num & date to S3 
     dest = bucket_root + "/" + bucket_dir + "/" + new_filename   
