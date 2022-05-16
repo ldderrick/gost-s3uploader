@@ -5,9 +5,18 @@ import shutil
 import subprocess
 from pathlib import Path
 
-sso = ["aws", "configure", "sso"]
-sso = " ".join(sso)
-result = subprocess.run(sso)
+print("Select Configure SSO on initial setup. Once the the profile is configured, choose option 2 and enter the profile name you configured on initial setup.")
+choice = input("Choose: 1 = Configure SSO | 2 = Login with Profile: ")
+
+if choice == "1":
+  sso_config = ["aws", "configure", "sso"]
+  sso_config = " ".join(sso_config)
+  result = subprocess.run(sso_config)
+else:
+  profile_name = input("Enter profile name to login as: ")
+  sso_login = ["aws", "sso", "login", "--profile", f"{profile_name}"]
+  sso_login = " ".join(sso_login)
+  result = subprocess.run(sso_login)
 
 TIMENOW=strftime("%Y%m%d",gmtime())
 bucket_root='s3://gost-internal-upload'
@@ -34,7 +43,7 @@ for dir_p in [cob_p, adid_p, media_p]:
   
     # Send file w/ RFI_num & date to S3 
     dest = bucket_root + "/" + bucket_dir + "/" + new_filename   
-    cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", "devadmin", "--region", "us-gov-west-1"]
+    cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", f"{profile_name}", "--region", "us-gov-west-1"]
     cmd = " ".join(cmd)
     result = subprocess.run(cmd)
   
