@@ -1,15 +1,9 @@
-import boto3
-from botocore.exceptions import ClientError
-import os, sys
 import shutil
 from pathlib import Path
 from time import gmtime, strftime
 import subprocess
-from subprocess import Popen, PIPE
-import logging
-import botocore.session
 
-print("Configure SSO needs to be run on initial setup. Once the the profile is configured, choose option 2 and enter the profile name you configured on initial setup.")
+print("Configure SSO needs to be run on initial setup. Once the the profile is configured,\nchoose option 2 and enter the profile name you configured on initial setup.")
 choice = input("Choose: 1 = Configure SSO | 2 = Login with Profile: ")
 
 if choice == 1:

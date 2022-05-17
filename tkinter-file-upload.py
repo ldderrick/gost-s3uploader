@@ -2,6 +2,10 @@ from tkinter import *
 from tkinter.ttk import *
 from tkinter.filedialog import askopenfile 
 import time
+import shutil
+import subprocess
+from pathlib import Path
+from time import gmtime, strftime
 
 ws = Tk()
 ws.title('GOST S3 Uploader')
@@ -73,6 +77,53 @@ upld = Button(
     )
 upld.grid(row=3, columnspan=3, pady=10)
 
+def configure_sso():
+    sso_config = ["aws", "configure", "sso"]
+    sso_config = " ".join(sso_config)
+    result = subprocess.run(sso_config)
 
+def sso_login():
+    global profile_name
+    profile_name = input("Enter profile name to login as: ")
+    sso_login = ["aws", "sso", "login", "--profile", f"{profile_name}"]
+    sso_login = " ".join(sso_login)
+    result = subprocess.run(sso_login)
+
+TIMENOW=strftime("%Y%m%d",gmtime())
+bucket_root='s3://gost-dev-cell'
+def create_dirs():
+    PARENT_FOLDER = Path("C://dev")
+    global gost_dev
+    gost_dev = PARENT_FOLDER / "gost-dev-cell"
+    gost_dev.mkdir(parents=True, exist_ok=True)
+    global arch_p
+    arch_p = PARENT_FOLDER / "archive"  
+    arch_p.mkdir(parents=True, exist_ok=True)
+
+def s3_upload():
+    RFI_num = input("What is the RFI Number? (e.g. RFI 00027, Enter 27) ")
+    for dir_p in [gost_dev]:
+        bucket_dir = dir_p.name
+        for path in dir_p.glob("*.csv"):  # path is cob/filename.csv
+            print(path)
+            # append RFI_num and date to the original file name
+            new_filename = (path.stem+"_"+RFI_num+"_"+TIMENOW+".csv")
+            print(new_filename)  
+            # Send file w/ RFI_num & date to S3 
+            key = bucket_dir + "/" + new_filename
+            dest = bucket_root + "/" + new_filename   
+            # abs_path = os.path.abspath(new_filename)
+            # print(abs_path)
+            cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", f"{profile_name}", "--region", "us-gov-west-1"]
+            cmd = " ".join(cmd)
+            result = subprocess.run(cmd)
+        
+            if not result.returncode:
+                # Move file to archive folder once successfull upload to S3
+                print("Upload Successful!")
+                shutil.move(path, arch_p / new_filename)
+            else:
+                print("Error running:  ", cmd)
+                #sys.exit(-1)  # ?
 
 ws.mainloop()

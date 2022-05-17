@@ -27,11 +27,7 @@ Select ***<font color=veranda>option 1</font>*** if this is your first time runn
 [SSO-GOSTAnalyst]<br>
 **aws_access_key_id**=*your access key*<br>
 **aws_secret_access_key**=*your secret key*<br>
-**aws_session_token**=*your session token*
-
-## **Dependencies**<br>
-Python 3.9<br>
-AWS CLIv2
+**aws_session_token**=*your session token*<br>
 
 ## **Requirements**<br>
 from time import gmtime, strftime<br>

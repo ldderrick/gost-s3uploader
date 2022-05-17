@@ -1,11 +1,9 @@
-import boto3
-import os, sys
 from time import gmtime, strftime
 import shutil
 import subprocess
 from pathlib import Path
 
-print("Select Configure SSO on initial setup. Once the the profile is configured, choose option 2 and enter the profile name you configured on initial setup.")
+print("Select Configure SSO on initial setup. Once the the profile is configured,\nchoose option 2 and enter the profile name you configured on initial setup.")
 choice = input("Choose: 1 = Configure SSO | 2 = Login with Profile: ")
 
 if choice == "1":
@@ -20,7 +18,7 @@ else:
 
 TIMENOW=strftime("%Y%m%d",gmtime())
 bucket_root='s3://gost-internal-upload'
-PARENT_FOLDER = Path("D://data")
+PARENT_FOLDER = Path("C://data")
     
 cob_p = PARENT_FOLDER / "cobwebs"
 media_p = PARENT_FOLDER / "social-media"
