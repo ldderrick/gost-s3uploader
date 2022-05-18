@@ -1,7 +1,10 @@
 # **gost-s3uploader**
-Program to upload files to S3 bucket gost-internal-upload. 
 
-Select ***<font color=veranda>option 1</font>*** if this is your first time running the program. You will configure your SSO and create a profile (***see example config file below***). You will only configure SSO on the initial run. After that you will use ***<font color=veranda>option 2</font>*** to login with that profile. 
+Select ***<font color=veranda>option 1</font>*** if this is your first time running the program. You will configure your SSO and create a profile (***see example config file below***). You will only configure SSO on the initial run. After that you will use ***<font color=veranda>option 2</font>*** to login with that profile.<br>
+
+If you want to check your upload, click on the link below. You will only be able to access the 'gost-internal-upload' bucket and read objects in the bucket.<br>
+
+**s3://gost-internal-upload**: https://console.amazonaws-us-gov.com/s3/buckets/gost-internal-upload?region=us-gov-west-1<br>
 
 ## **Initial Setup w/ "aws configure sso"**
 1. Enter "1" to configure SSO.
