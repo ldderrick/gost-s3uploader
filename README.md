@@ -9,7 +9,7 @@
 AWS CLI v2
 Access to AWS GOST Prod Env
 
-## **Login"**
+## **Login**
 1. Enter "analyst" when prompted to login.
 2. Your defualt browser will pop-up asking you to log in or confirm authorization.
 

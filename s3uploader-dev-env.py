@@ -1,5 +1,4 @@
 from time import gmtime, strftime
-import shutil
 import subprocess
 from pathlib import Path
 import os
@@ -22,11 +21,11 @@ else:
     # create a file
     with open(file_path, 'w') as fp:
         # uncomment if you want empty file
-        fp.write('[profile devadmin]\n')
+        fp.write('[profile dev]\n')
         fp.write('sso_start_url = https://start.us-gov-home.awsapps.com/directory/gost-smx-com\n')
         fp.write('sso_region = us-gov-west-1\n')
         fp.write('sso_account_id = 033426607440\n')
-        fp.write('sso_role_name = SSO-OperationsAdmin\n')
+        fp.write('sso_role_name = SSO_GOSTAnalyst_dt\n')
         fp.write('region = us-gov-west-1\n')
         fp.write('output = json\n')
 
@@ -53,7 +52,7 @@ RFI_num = "RFI" + RFI_num
 
 for dir_p in [gost_dev]:
   for path in dir_p.glob("*.csv"): # path is cob/filename.csv
-    new_path = str(path).replace(" ", "_")
+    new_path = str(path).replace(" ", "")
     os.rename(path, new_path)
 
 for dir_p in [gost_dev]:
@@ -63,7 +62,7 @@ for dir_p in [gost_dev]:
     new_filename = (path.stem+"_"+RFI_num+"_"+TIMENOW+".csv")
     # Send file w/ RFI_num & date to S3 
     dest = bucket_root + "/" + bucket_dir + "/" + new_filename   
-    cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", f"{profile_name}", "--region", "us-gov-west-1"]
+    cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", f"{profile_name}", "--region", "us-gov-west-1", "--debug"]
     cmd = " ".join(cmd)
     result = subprocess.run(cmd)
   
@@ -74,4 +73,6 @@ for dir_p in [gost_dev]:
       print(f"{path} deleted.")
     else:
       print("Error running:  ", cmd)
+
+input("Press any key to exit.")
       

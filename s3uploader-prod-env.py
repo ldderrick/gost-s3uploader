@@ -1,8 +1,7 @@
 from time import gmtime, strftime
-import shutil
 import subprocess
 from pathlib import Path
-import os, re
+import os
 
 PARENT_FOLDER = Path("C://data")
 USER_PROFILE = Path.home()
@@ -27,11 +26,11 @@ else:
     # create a file
     with open(file_path, 'w') as fp:
         # uncomment if you want empty file
-        fp.write('[profile devadmin]\n')
+        fp.write('[profile analyst]\n')
         fp.write('sso_start_url = https://start.us-gov-home.awsapps.com/directory/gost-smx-com\n')
         fp.write('sso_region = us-gov-west-1\n')
-        fp.write('sso_account_id = 033426607440\n')
-        fp.write('sso_role_name = SSO-OperationsAdmin\n')
+        fp.write('sso_account_id = 501979927634\n')
+        fp.write('sso_role_name = SSO-GOSTAnalyst\n')
         fp.write('region = us-gov-west-1\n')
         fp.write('output = json\n')
 
@@ -70,4 +69,4 @@ for dir_p in [adid_p, media_p, ais_p]:
       print("Error running:  ", cmd)
       # sys.exit(-1)  # ?
 
-input("Press enter to exit.")
+input("Press any key to exit.")
