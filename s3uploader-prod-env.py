@@ -10,13 +10,13 @@ bucket_root='s3://gost-internal-upload'
 ais_p = PARENT_FOLDER / "ais"
 media_p = PARENT_FOLDER / "social-media"
 adid_p = PARENT_FOLDER / "adid"
-arch_p = PARENT_FOLDER / "archive"
+#arch_p = PARENT_FOLDER / "archive"
 aws = USER_PROFILE / '.aws'
 
 ais_p.mkdir(parents=True, exist_ok=True)     
 media_p.mkdir(parents=True, exist_ok=True)
 adid_p.mkdir(parents=True, exist_ok=True)    
-arch_p.mkdir(parents=True, exist_ok=True)
+#arch_p.mkdir(parents=True, exist_ok=True)
 aws.mkdir(parents=True, exist_ok=True)
 
 file_path = f'{USER_PROFILE}\\.aws\\config'

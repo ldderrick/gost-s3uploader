@@ -2,7 +2,7 @@
 
 1. Creates folders in C://data to transfer files.
 2. Creates an AWS config file in C://Users/%USERPROFILE%/.aws. ***(See example config file below)***
-3. Logs into AWS GOST Prod Env with 'analyst' profile.
+3. Logs into AWS GOST with 'analyst' profile.
 4. Transfers file to S3://gost-internal-upload.
 
 # **Requirements**
