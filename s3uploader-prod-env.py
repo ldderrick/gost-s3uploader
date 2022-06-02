@@ -7,25 +7,42 @@ PARENT_FOLDER = Path("C://data")
 USER_PROFILE = Path.home()
 TIMENOW=strftime("%Y%m%d",gmtime())
 bucket_root='s3://gost-internal-upload'
-ais_p = PARENT_FOLDER / "ais"
-media_p = PARENT_FOLDER / "social-media"
-adid_p = PARENT_FOLDER / "adid"
-#arch_p = PARENT_FOLDER / "archive"
-aws = USER_PROFILE / '.aws'
 
-ais_p.mkdir(parents=True, exist_ok=True)     
-media_p.mkdir(parents=True, exist_ok=True)
-adid_p.mkdir(parents=True, exist_ok=True)    
-#arch_p.mkdir(parents=True, exist_ok=True)
+ais = PARENT_FOLDER / "ais"
+ais.mkdir(parents=True, exist_ok=True) 
+media = PARENT_FOLDER / "social-media"
+media.mkdir(parents=True, exist_ok=True)
+adid = PARENT_FOLDER / "adid"
+adid.mkdir(parents=True, exist_ok=True) 
+aws = USER_PROFILE / '.aws'
 aws.mkdir(parents=True, exist_ok=True)
+carbon = PARENT_FOLDER / "carbon_reach"
+carbon.mkdir(parents=True, exist_ok=True)
+gdelt = PARENT_FOLDER / "gdelt"
+gdelt.mkdir(parents=True, exist_ok=True)
+hotspot = PARENT_FOLDER / "hotpsot"
+hotspot.mkdir(parents=True, exist_ok=True)
+genius = PARENT_FOLDER / "import_genius"
+genius.mkdir(parents=True, exist_ok=True)
+pulse = PARENT_FOLDER / "pulse"
+pulse.mkdir(parents=True, exist_ok=True)
+sayari = PARENT_FOLDER / "sayari"
+sayari.mkdir(parents=True, exist_ok=True)
+sm = PARENT_FOLDER / "social_media"
+sm.mkdir(parents=True, exist_ok=True)
+wind = PARENT_FOLDER / "windward"
+wind.mkdir(parents=True, exist_ok=True)
+acled = PARENT_FOLDER / "acled"
+acled.mkdir(parents=True, exist_ok=True)
+gost_dev = PARENT_FOLDER / "gost-dev-cell"
+gost_dev.mkdir(parents=True, exist_ok=True)
 
 file_path = f'{USER_PROFILE}\\.aws\\config'
 if os.path.exists(file_path):
     print('Config file already exists')
 else:
-    # create a file
     with open(file_path, 'w') as fp:
-        # uncomment if you want empty file
+        # writing config file with GOSTAnalyst role and ID. Only allows PUT to S3.
         fp.write('[profile analyst]\n')
         fp.write('sso_start_url = https://start.us-gov-home.awsapps.com/directory/gost-smx-com\n')
         fp.write('sso_region = us-gov-west-1\n')
@@ -44,12 +61,12 @@ print("Drop your CSV in the appropriate folder for upload in C\\\\data.")
 RFI_num = input("What is the RFI Number? (e.g. RFI 00027, Enter 27): ")
 RFI_num = "RFI" + RFI_num
 
-for dir_p in [adid_p, media_p, ais_p]:
+for dir_p in [gost_dev, acled, carbon, gdelt, hotspot, genius, pulse, sayari, sm, wind]:
   for path in dir_p.glob("*.csv"): # path is cob/filename.csv
     new_path = str(path).replace(" ", "_")
     os.rename(path, new_path)
 
-for dir_p in [adid_p, media_p, ais_p]:
+for dir_p in [gost_dev, acled, carbon, gdelt, hotspot, genius, pulse, sayari, sm, wind]:
   bucket_dir = dir_p.name
   for path in dir_p.glob("*.csv"): # path is cob/filename.csv
     # append RFI_num and date to the original file name
@@ -62,11 +79,11 @@ for dir_p in [adid_p, media_p, ais_p]:
   
     if not result.returncode:
       print("Upload Successful!")
-      # Move file to archive folder once successfull upload to S3
+      # Local file is deleted after successful upload.
       os.remove(path)
       print(f"{path} deleted.")
     else:
       print("Error running:  ", cmd)
-      # sys.exit(-1)  # ?
+      
 
 input("Press any key to exit.")
