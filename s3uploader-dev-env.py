@@ -4,19 +4,16 @@ from pathlib import Path
 import os
 
 
-PARENT_FOLDER = Path("C://dev")
+PARENT_FOLDER = Path("C://s3-data-upload")
 USER_PROFILE = Path.home()
 TIMENOW=strftime("%Y%m%d",gmtime())
 bucket_root='s3://gost-dev-cell'
-gost_dev = PARENT_FOLDER / "gost-dev-cell"
-gost_dev.mkdir(parents=True, exist_ok=True)
-arch_p = PARENT_FOLDER / "archive"  
-arch_p.mkdir(parents=True, exist_ok=True)
+
 aws = USER_PROFILE / '.aws'
 aws.mkdir(parents=True, exist_ok=True)
 acled = PARENT_FOLDER / "acled"
 acled.mkdir(parents=True, exist_ok=True)
-adtech = PARENT_FOLDER / "adtech"
+adtech = PARENT_FOLDER / "cobwebs_adtech"
 adtech.mkdir(parents=True, exist_ok=True)
 carbon = PARENT_FOLDER / "carbon_reach"
 carbon.mkdir(parents=True, exist_ok=True)
@@ -30,18 +27,43 @@ pulse = PARENT_FOLDER / "pulse"
 pulse.mkdir(parents=True, exist_ok=True)
 sayari = PARENT_FOLDER / "sayari"
 sayari.mkdir(parents=True, exist_ok=True)
-sm = PARENT_FOLDER / "social_media"
+sm = PARENT_FOLDER / "cobwebs_social_media"
 sm.mkdir(parents=True, exist_ok=True)
 wind = PARENT_FOLDER / "windward"
 wind.mkdir(parents=True, exist_ok=True)
+blue = PARENT_FOLDER / "bluestone"
+blue.mkdir(parents=True, exist_ok=True)
+dnb = PARENT_FOLDER / "dnb"
+dnb.mkdir(parents=True, exist_ok=True)
+orbis = PARENT_FOLDER / "orbis"
+orbis.mkdir(parents=True, exist_ok=True)
+premise = PARENT_FOLDER / 'premise'
+premise.mkdir(parents=True, exist_ok=True)
+shodan = PARENT_FOLDER / "shodan"
+shodan.mkdir(parents=True, exist_ok=True)
+spider = PARENT_FOLDER / "spiderfoot"
+spider.mkdir(parents=True, exist_ok=True)
+spire = PARENT_FOLDER / "spire"
+spire.mkdir(parents=True, exist_ok=True)
 
 file_path = f'{USER_PROFILE}\\.aws\\config'
 if os.path.exists(file_path):
-    print('Config file already exists')
+    with open(file_path) as fp:
+        if 'sso_role_name = SSO-GOSTAnalyst' in fp.read():
+            print('Analyst profile found')
+        else:
+            with open(file_path, 'a') as fp:
+                # writing config file with GOSTAnalyst role and ID. Only allows PUT to S3.
+                fp.write('[profile dev]\n')
+                fp.write('sso_start_url = https://start.us-gov-home.awsapps.com/directory/gost-smx-com\n')
+                fp.write('sso_region = us-gov-west-1\n')
+                fp.write('sso_account_id = 033426607440\n')
+                fp.write('sso_role_name = SSO-OperationsAdmin\n')
+                fp.write('region = us-gov-west-1\n')
+                fp.write('output = json\n')
 else:
-    # create a file
+    print("Creating config file...")
     with open(file_path, 'w') as fp:
-        # uncomment if you want empty file
         fp.write('[profile dev]\n')
         fp.write('sso_start_url = https://start.us-gov-home.awsapps.com/directory/gost-smx-com\n')
         fp.write('sso_region = us-gov-west-1\n')
@@ -49,8 +71,6 @@ else:
         fp.write('sso_role_name = SSO-OperationsAdmin\n')
         fp.write('region = us-gov-west-1\n')
         fp.write('output = json\n')
-
-print("Directories have been created in C:\\\\dev. Drop your CSV in the appropriate folder for upload.")
 
 # choice = input("Configure SSO (1) | Login (2): ")
 
@@ -63,20 +83,22 @@ print("Directories have been created in C:\\\\dev. Drop your CSV in the appropri
 #     sso_login = " ".join(sso_login)
 #     result = subprocess.run(sso_login)
 # else:
-profile_name = input("Enter profile name to login as: ")
+profile_name = "devadmin" #input("Enter profile name to login as: ")
 sso_login = ["aws", "sso", "login", "--profile", f"{profile_name}"]
 sso_login = " ".join(sso_login)
 result = subprocess.run(sso_login)
 
+print("Directories have been created in C:\\\\s3-data-upload. Drop your CSV in the appropriate folder before proceeding.")
+
 RFI_num = input("What is the RFI Number? (e.g. RFI 00027, Enter 27): ")
 RFI_num = "RFI" + RFI_num
 
-for dir_p in [gost_dev, acled, adtech, carbon, gdelt, hotspot, genius, pulse, sayari, sm, wind]:
+for dir_p in [acled, blue, adtech, carbon, dnb, gdelt, hotspot, genius, orbis, premise, pulse, sayari, shodan, spider, spire, sm, wind]:
   for path in dir_p.glob("*.csv"): # path is cob/filename.csv
     new_path = str(path).replace(" ", "")
     os.rename(path, new_path)
 
-for dir_p in [gost_dev, acled, adtech, carbon, gdelt, hotspot, genius, pulse, sayari, sm, wind]:
+for dir_p in [acled, blue, adtech, carbon, dnb, gdelt, hotspot, genius, orbis, premise, pulse, sayari, shodan, spider, spire, sm, wind]:
   bucket_dir = dir_p.name
   for path in dir_p.glob("*.csv"):  # path is cob/filename.csv
     # append RFI_num and date to the original file name
@@ -95,5 +117,5 @@ for dir_p in [gost_dev, acled, adtech, carbon, gdelt, hotspot, genius, pulse, sa
     else:
       print("Error running:  ", cmd)
 
-input("Press any key to exit.")
+x = input("Press any key to exit. . .")
       
