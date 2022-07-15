@@ -2,10 +2,12 @@ from time import gmtime, strftime
 import subprocess
 from pathlib import Path
 import os
+import glob
+import pandas as pd
 
 PARENT_FOLDER = Path("C://s3-data-upload")
 USER_PROFILE = Path.home()
-TIMENOW=strftime("%Y%m%d",gmtime())
+TIMENOW=strftime("%Y-%m-%d",gmtime())
 bucket_root='s3://gost-prod-cell'
 
 aws = USER_PROFILE / '.aws'
@@ -24,8 +26,12 @@ genius = PARENT_FOLDER / "import_genius"
 genius.mkdir(parents=True, exist_ok=True)
 pulse = PARENT_FOLDER / "pulse"
 pulse.mkdir(parents=True, exist_ok=True)
-sayari = PARENT_FOLDER / "sayari"
-sayari.mkdir(parents=True, exist_ok=True)
+# sayari = PARENT_FOLDER / "sayari"
+# sayari.mkdir(parents=True, exist_ok=True)
+say_rel = PARENT_FOLDER / "sayari_relationship"
+say_rel.mkdir(parents=True, exist_ok=True)
+say_att = PARENT_FOLDER / "sayari_attributes"
+say_att.mkdir(parents=True, exist_ok=True)
 sm = PARENT_FOLDER / "cobwebs_social_media"
 sm.mkdir(parents=True, exist_ok=True)
 wind = PARENT_FOLDER / "windward"
@@ -79,20 +85,25 @@ result = subprocess.run(sso_login)
 
 print("Directories have been created in C:\\\\s3-data-upload. Drop your CSV in the appropriate folder before proceeding.")
 
-RFI_num = input("What is the RFI Number? (e.g. RFI 00027, Enter 27): ")
-RFI_num = "RFI" + RFI_num
+rfs = input("What is the RFS Number? (e.g. RFS 00027, Enter 27): ")
+RFS_num = "RFS" + rfs
 
-for dir_p in [acled, blue, adtech, carbon, dnb, gdelt, hotspot, genius, orbis, premise, pulse, sayari, shodan, spider, spire, sm, wind]:
-  for path in dir_p.glob("*.csv"): # path is cob/filename.csv
-    new_path = str(path).replace(" ", "")
-    os.rename(path, new_path)
+for filename in glob.glob(f"{PARENT_FOLDER}\\**\\*.csv"):
+    print(filename)
+    new_path = filename.replace(" ", "")
+    print(new_path)
+    os.rename(filename, new_path)
+    df = pd.read_csv(new_path, encoding='utf-8')
+    df['rfs'] = rfs
+    df['file_date'] = TIMENOW
+    df.to_csv(new_path, index=False, encoding='utf-8')
 
-for dir_p in [acled, blue, adtech, carbon, dnb, gdelt, hotspot, genius, orbis, premise, pulse, sayari, shodan, spider, spire, sm, wind]:
+for dir_p in [acled, blue, adtech, carbon, dnb, gdelt, hotspot, genius, orbis, premise, pulse, say_att, say_rel, shodan, spider, spire, sm, wind]:
   bucket_dir = dir_p.name
   for path in dir_p.glob("*.csv"): # path is cob/filename.csv
-    # append RFI_num and date to the original file name
-    new_filename = (path.stem+"_"+RFI_num+"_"+TIMENOW+".csv")
-    # Send file w/ RFI_num & date to S3 
+    # append RFS_num and date to the original file name
+    new_filename = (path.stem+"_"+RFS_num+"_"+TIMENOW+".csv")
+    # Send file w/ RFS_num & date to S3 
     dest = bucket_root + "/" + bucket_dir + "/" + new_filename 
     cmd = ["aws", "s3", "cp", str(path), str(dest), "--profile", f"{profile_name}", "--region", "us-gov-west-1", "--debug"]
     cmd = " ".join(cmd)
